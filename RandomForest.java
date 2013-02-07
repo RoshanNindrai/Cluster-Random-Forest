@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
 import edu.rit.mp.ObjectBuf;
 import edu.rit.pj.Comm;
 
@@ -31,7 +30,7 @@ public class RandomForest<D> {
 	static Comm world;
 	static int rank, size;
 	static List<String> decisionbyvote=null;
-	static List<String> mode;
+	static List<String> results;
     public static <D> RandomForest<D> growRandomForest(
     		
             Map<String,List<String>> attrs,
@@ -66,7 +65,7 @@ public class RandomForest<D> {
     	world=Comm.world();
     	rank=world.rank();
     	size=world.size();
-    	ObjectBuf<String> gather;
+    	ObjectBuf<List<String>> gather;
     	Scanner scan;
     	Map<String,String> choices=new HashMap<String,String>();
     	Map<String,List<String>> attrs=new HashMap<String,List<String>>();
@@ -75,7 +74,7 @@ public class RandomForest<D> {
     	File sample=new File("INPUT.txt");
     	List<String> type=new ArrayList<String>();
     	decisionbyvote=new ArrayList<String>();
-    	mode=new ArrayList<String>();
+    	results=new ArrayList<String>();
     	gather=ObjectBuf.buffer();
     	Sample test;
     	try {
@@ -119,20 +118,20 @@ public class RandomForest<D> {
     	RandomForest forest=growRandomForest(attrs,samples,3,5,9);
     	for(int i=0;i<forest.trees.size();i++){
     		Tree treeresult=(Tree) forest.trees.get(i);
-    		mode.add((String) treeresult.decide(test.choices));
+    		results.add((String) treeresult.decide(test.choices));
     		
     	}
-    	String final_decision=ListUtils.mode(mode);
-    	System.out.println("Decision by "+rank+" which is "+mode+" and the final decision taken by this forest is "+final_decision);
+    	System.out.println("Decision by "+rank+" which is "+results);
     	if(rank!=0){
-    		gather.fill(final_decision);
+    		gather.fill(results);
     		world.send(0, gather);
     	}
     	else{
-    		decisionbyvote.add(final_decision);
+    		decisionbyvote.addAll(results);
     		for(int i=1;i<size;i++){
     			world.receive(i, gather);
-    			decisionbyvote.add(gather.get(0));
+    			
+    			decisionbyvote.addAll(gather.get(0));
     		}
     		System.out.println(decisionbyvote);
     		System.out.println(ListUtils.mode(decisionbyvote));
