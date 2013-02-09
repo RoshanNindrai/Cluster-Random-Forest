@@ -92,7 +92,7 @@ public class RandomForest<D> {
 				}
 				
 				attrs.put(attributes[i], type);
-				System.out.println(attrs);
+				//System.out.println(attrs);
 				type=new ArrayList<String>();
 			}
 			while(scan.hasNext()){
@@ -102,7 +102,7 @@ public class RandomForest<D> {
 					choices.put(attributes[i], scan.next());
 				}
 				//System.out.println(choices);
-				System.out.println(decision);
+				//System.out.println(decision);
 				samples.add(new Sample(choices,decision));
 				choices=new HashMap<String,String>();
 			}
@@ -110,7 +110,7 @@ public class RandomForest<D> {
 		} catch (FileNotFoundException e) {
 			System.err.print("File Not found");
 		}
-    	test=samples.get(8);
+    	test=samples.get(1);
     	System.out.println(test.choices);
     	RandomForest forest=growRandomForest(attrs,samples,3,5,9);
     	for(int i=0;i<forest.trees.size();i++){
