@@ -92,20 +92,17 @@ public class RandomForest<D> {
 				}
 				
 				attrs.put(attributes[i], type);
-				//System.out.println(attrs);
+				System.out.println(attrs);
 				type=new ArrayList<String>();
 			}
 			while(scan.hasNext()){
-				for(int i=0;i<=number_of_attributes;i++){
-				if(i!=number_of_attributes){
+				decision=scan.next();
+				for(int i=0;i<number_of_attributes;i++){
+				
 					choices.put(attributes[i], scan.next());
 				}
-				else{
-					decision=scan.next();
-				}
-				}
 				//System.out.println(choices);
-				//System.out.println(decision);
+				System.out.println(decision);
 				samples.add(new Sample(choices,decision));
 				choices=new HashMap<String,String>();
 			}
@@ -117,7 +114,7 @@ public class RandomForest<D> {
     	System.out.println(test.choices);
     	RandomForest forest=growRandomForest(attrs,samples,3,5,9);
     	for(int i=0;i<forest.trees.size();i++){
-    		Tree treeresult=(Tree) forest.trees.get(i);
+    		DecisionTree treeresult= (DecisionTree) forest.trees.get(i);
     		results.add((String) treeresult.decide(test.choices));
     		
     	}
@@ -130,7 +127,6 @@ public class RandomForest<D> {
     		decisionbyvote.addAll(results);
     		for(int i=1;i<size;i++){
     			world.receive(i, gather);
-    			
     			decisionbyvote.addAll(gather.get(0));
     		}
     		System.out.println(decisionbyvote);
